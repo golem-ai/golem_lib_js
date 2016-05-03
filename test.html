@@ -12,13 +12,13 @@
     
     function start(evt, client) {
         console.log(client)
-        client.identify("TestingFront")
+        client.identify("TestingFront", "session_name")
         client.sendRequest(lang_fr, "Un coeur rose")
     }
     
     function start2(evt, client) {
         console.log(client)
-        client.identify("TestingTarget")
+        client.identify("TestingTarget", "session_name")
         client.delInteraction(4, "test_id")
     }
 </script>

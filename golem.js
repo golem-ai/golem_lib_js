@@ -58,7 +58,7 @@ class GolemCore {
         };
         this.socket.onmessage = function(evt) {
             client.last_packet_received = evt
-            onMsgFct(evt, client)
+            onMsgFct(evt.data, client)
             client.parsing(evt.data)
         };
         this.socket.onclose = function(evt) {
@@ -78,10 +78,11 @@ class GolemCore {
     ** Private
     */
     
-    identify(identity, name) {
+    identify(identity, name, id_session) {
         this.send({
     	    type:"identity",
     	    category:identity,
+    	    id_session:id_session,
     	    version:1,
     	    revision:0,
     	    name: name
@@ -124,8 +125,8 @@ class GolemFront extends GolemCore {
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk)
     }
     
-    identify(name) {
-        super.identify("front", name)
+    identify(name, id_session) {
+        super.identify("front", name, id_session)
     }
     
     sendRequest(lang, text) {
@@ -157,8 +158,8 @@ class GolemTarget extends GolemCore {
         this.add_parsing_function("confirm_interaction_array", confirm_interaction_array)
     }
     
-    identify(name) {
-        super.identify("front", name)
+    identify(name, id_session) {
+        super.identify("front", name, id_session)
     }
     
     interactionArray(array) {
