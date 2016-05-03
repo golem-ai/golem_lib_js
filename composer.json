@@ -1,9 +1,6 @@
 {
-    "name": "golemjs",
-    "type": "library",
-    "description": "Golem.ai Javascript Framework",
-    "keywords": ["framework"],
-    "homepage": "http://golem.ai",
+    "name": "golemai/golemjs",
+    "description": "Golem.ai Javascript Helper",
     "authors": [
         {
             "name": "Killian Vermersch",
@@ -11,7 +8,8 @@
         },
         {
             "name": "Thomas Solignac",
-            "homepage": "thomas@golem.ai"
+            "email": "thomas@golem.ai"
         }
-    ]
+    ],
+    "require": {}
 }
