@@ -1,0 +1,17 @@
+<script src="golem.js"></script>
+<script src="log.js"></script>
+<script src="tools.js"></script>
+<script>
+    var tmp1 = new GolemFront("golem.ai", 4009, start, def, def, def)
+    tmp1.setParsingFct(def, def, def)
+
+    function def(evt, client) {
+        console.log(client, "---", evt)   
+    }
+    
+    function start(evt, client) {
+        console.log(client)
+        client.identify("TestingFront")
+        client.sendRequest(lang_fr, "Un coeurs roses")
+    }
+</script>

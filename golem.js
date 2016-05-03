@@ -6,23 +6,27 @@ class GolemCore {
     /*
     ** Public
     */
-    constructor(onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
+    constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
+        this.call_map = {}
         this.connected = false
+        var host = "ws://" + host + ":" + port;
+        this.socket = new WebSocket(host);
+        var client = this
         this.socket.onopen = function(evt) {
-            this.connected = true
-            onOpenFct(evt, this)
+            client.connected = true
+            onOpenFct(evt, client)
         };
         this.socket.onerror = function(evt) {
-            onErrorFct(evt, this)
+            onErrorFct(evt, client)
         };
         this.socket.onmessage = function(evt) {
-            this.last_packet_received = evt
-            onMsgFct(evt, this)
-            this.parsing(evt.data)
+            client.last_packet_received = evt
+            onMsgFct(evt, client)
+            client.parsing(evt.data)
         };
         this.socket.onclose = function(evt) {
-            this.connected = false
-            onCloseFct(evt, this)
+            client.connected = false
+            onCloseFct(evt, client)
         };
     };
     
@@ -37,10 +41,8 @@ class GolemCore {
     ** Private
     */
     
-    connect(host, port, identity, name) {
-        var host = "ws://" + host + ":" + port;
-        this.socket = new WebSocket(host);
-        this.golem_send({
+    identify(identity, name) {
+        this.send({
     	    type:"identity",
     	    category:identity,
     	    version:1,
@@ -64,17 +66,10 @@ class GolemCore {
         var call = this.call_map[key]
         if (typeof call != 'function') {
             console.log("Received unknown action ", key, " in ", this.identity)
+            console.log("Msg->", msg)
             return 
         }
         call(this, obj)
-    }
-    
-    get last_packet_sent() {
-        return this.last_packet_sent
-    }
-    
-    get last_packet_received() {
-        return this.last_packet_received
     }
 }
 
@@ -87,16 +82,20 @@ class GolemFront extends GolemCore {
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk)
     }
     
+    identify(name) {
+        super.identify("front", name)
+    }
+    
     sendRequest(lang, text) {
-        this.golem_send({
+        this.send({
     	    type:"request",
     	    language:lang,
     	    text:text
     	});
     }
     
-    setFixedTime(year, month, day, h, m s) {
-        this.golem_send({
+    setFixedTime(year, month, day, h, m, s) {
+        this.send({
     	    type:"set_fixed_time",
     	    year:year,
     	    month:month,
@@ -106,64 +105,12 @@ class GolemFront extends GolemCore {
     	    seconde:s
     	});
     }
-    
-    connect(host, port, name) {
-        this.super.connect(host, port, "front", name)
-    }
 }
 
 
 /*
 ** OLD
 */
-
-
-var last_packet_sent;
-var last_answer_received;
-var last_call_received;
-var last_command;
-var last_language;
-
-function create_json_insatisfaction() {
-    var json = {
-        url: "<" + window.location.href + ">",
-        name: golem_project_name,
-        websocket_port: websocket_port,
-        last_packet_sent: last_packet_sent,
-        last_answer_received: last_answer_received,
-        last_call_received: last_call_received,
-        last_command: last_command,
-        last_language: last_language,
-        user_agent: navigator.userAgent
-    };
-    return json;
-}
-
-$("#unsatisfied_button").click(function(event) {
-    $("#unsatisfied_button").addClass('disabled');
-    var data = create_json_insatisfaction();
-    var message = '';
-    $.each(data, function(index, value) {
-        message += index + " : " + value + "\n";
-    });
-    message += "================================";
-    var json = {
-        payload: JSON.stringify({
-            text: message
-        })
-    };
-    $.post("https://hooks.slack.com/services/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", json, function(data) {
-        $.rustaMsgBox({
-            fadeOut: false,
-            closeButton: true,
-            content: "Votre rapport d'erreur a bien été pris en compte. Merci.",
-            mode: 'success',
-            bottom: '150px',
-            fadeTimer: 4000
-        });
-    });
-    return false;
-});
 
 
 
