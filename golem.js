@@ -2,7 +2,6 @@
 ** Tools
 */
 
-
 function pad8(num) {
     var s = "00000000" + num;
     return s.substr(s.length - 8);
@@ -33,37 +32,41 @@ function log(message) {
 /*
 ** Framework
 */
-const lang_fr = "french"
-const lang_en = "english"
+const lang_fr = "french";
+const lang_en = "english";
 
 class GolemCore {
     /*
     ** Public
     */
     constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
-        this.call_map = {}
-        this.call_map["identity_confirm"] = this.identityConfirm
+        this.call_map = {};
+        this.call_map["identity_confirm"] = this.identityConfirm;
         
-        this.connected = false
+        this.connected = false;
         var host = "ws://" + host + ":" + port;
         this.socket = new WebSocket(host);
-        var client = this
+        var client = this;
         
         this.socket.onopen = function(evt) {
-            client.connected = true
-            onOpenFct(evt, client)
+            client.connected = true;
+	    if (typeof onOpenFct == 'function')
+		onOpenFct(evt, client);
         };
         this.socket.onerror = function(evt) {
-            onErrorFct(evt, client)
+	    if (typeof onErrorFct == 'function')
+		onErrorFct(evt, client);
         };
         this.socket.onmessage = function(evt) {
-            client.last_packet_received = evt
-            onMsgFct(evt.data, client)
-            client.parsing(evt.data)
+            client.last_packet_received = evt;
+	    if (typeof onMsgFct == 'function')
+		onMsgFct(evt.data, client);
+            client.parsing(evt.data);
         };
         this.socket.onclose = function(evt) {
-            client.connected = false
-            onCloseFct(evt, client)
+            client.connected = false;
+	    if (typeof onCloseFct == 'function')
+		onCloseFct(evt, client);
         };
     };
     
@@ -87,32 +90,33 @@ class GolemCore {
     	    revision:0,
     	    name: name
     	});
-    	this.identity = identity + "_not_confirmed"
+    	this.identity = identity + "_not_confirmed";
     }
     
     identityConfirm(client, obj) {
-        client.identity = obj.category
+        client.identity = obj.category;
     }
     
     add_parsing_function(key, call) {
-        if (typeof call != 'function') {
-            console.log("warning ! Paramer function call -", key, " is unset")
-            return
+        if (typeof call != 'function' && call != null) {
+            console.log("warning ! Paramer function call -", key, " is unset");
+            return;
         }
-        this.call_map[key] = call
+        this.call_map[key] = call;
     }
     
     parsing(msg) {
         msg = msg.substring(8);
         var obj = JSON.parse(msg);
-        var key = obj.type
-        var call = this.call_map[key]
-        if (typeof call != 'function') {
-            console.log("Received unknown action ", key, " in ", this.identity)
-            console.log("Msg->", msg)
-            return 
+        var key = obj.type;
+        var call = this.call_map[key];
+        if (typeof call != 'function' && call != null) {
+            console.log("Received unknown action ", key, " in ", this.identity);
+            console.log("Msg->", msg);
+            return ;
         }
-        call(this, obj)
+	else if (call != null)
+            call(this, obj);
     }
 }
 
@@ -120,13 +124,13 @@ class GolemCore {
 class GolemFront extends GolemCore {
     
     setParsingFct(requestConfirm, answer, setFixedTimeOk) {
-        this.add_parsing_function("request_confirm", requestConfirm)
-        this.add_parsing_function("answer", answer)
-        this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk)
+        this.add_parsing_function("request_confirm", requestConfirm);
+        this.add_parsing_function("answer", answer);
+        this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
     }
     
     identify(name, id_session) {
-        super.identify("front", name, id_session)
+        super.identify("front", name, id_session);
     }
     
     sendRequest(lang, text) {
@@ -153,13 +157,13 @@ class GolemFront extends GolemCore {
 class GolemTarget extends GolemCore {
     
     setParsingFct(call, confirm_interaction, confirm_interaction_array) {
-        this.add_parsing_function("call", call)
-        this.add_parsing_function("confirm_interaction", confirm_interaction)
-        this.add_parsing_function("confirm_interaction_array", confirm_interaction_array)
+        this.add_parsing_function("call", call);
+        this.add_parsing_function("confirm_interaction", confirm_interaction);
+        this.add_parsing_function("confirm_interaction_array", confirm_interaction_array);
     }
     
     identify(name, id_session) {
-        super.identify("front", name, id_session)
+        super.identify("front", name, id_session);
     }
     
     interactionArray(array) {
