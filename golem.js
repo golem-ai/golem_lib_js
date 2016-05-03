@@ -51,22 +51,22 @@ class GolemCore {
         this.socket.onopen = function(evt) {
             client.connected = true;
 	    if (typeof onOpenFct == 'function')
-		onOpenFct(evt, client);
+		onOpenFct(client, evt);
         };
         this.socket.onerror = function(evt) {
 	    if (typeof onErrorFct == 'function')
-		onErrorFct(evt, client);
+		onErrorFct(client, evt);
         };
         this.socket.onmessage = function(evt) {
             client.last_packet_received = evt;
 	    if (typeof onMsgFct == 'function')
-		onMsgFct(evt.data, client);
+		onMsgFct(client, evt);
             client.parsing(evt.data);
         };
         this.socket.onclose = function(evt) {
             client.connected = false;
 	    if (typeof onCloseFct == 'function')
-		onCloseFct(evt, client);
+		onCloseFct(client, evt);
         };
     };
     
