@@ -8,10 +8,13 @@ class GolemCore {
     */
     constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
         this.call_map = {}
+        this.call_map["identity_confirm"] = this.identityConfirm
+        
         this.connected = false
         var host = "ws://" + host + ":" + port;
         this.socket = new WebSocket(host);
         var client = this
+        
         this.socket.onopen = function(evt) {
             client.connected = true
             onOpenFct(evt, client)
@@ -49,6 +52,11 @@ class GolemCore {
     	    revision:0,
     	    name: name
     	});
+    	this.identity = identity + "_not_confirmed"
+    }
+    
+    identityConfirm(client, obj) {
+        client.identity = obj.category
     }
     
     add_parsing_function(key, call) {
@@ -78,7 +86,7 @@ class GolemFront extends GolemCore {
     
     setParsingFct(requestConfirm, answer, setFixedTimeOk) {
         this.add_parsing_function("request_confirm", requestConfirm)
-        this.add_parsing_function("answer", requestConfirm)
+        this.add_parsing_function("answer", answer)
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk)
     }
     
@@ -107,107 +115,35 @@ class GolemFront extends GolemCore {
     }
 }
 
-
-/*
-** OLD
-*/
-
-
-
-function golem_work(socket, language, query) {
-    var message = {
-        type: "request",
-        language: language,
-        text: query
-    };
-    last_command = query
-    last_language = language
-    golem_data_request(message);
-    golem_send(socket, message);
-}
-
-function golem_send(socket, message) {
-    message = JSON.stringify(message);
-    var len = pad8(byteLength(message));
-    log(socket.golem_type + " : Sending Message(" + len + ") : " + message);
-    socket.send(len + message);
-    last_packet_sent = message;
-}
-
-function golem_connect(host, port, type, context) {
-    var host = "ws://" + host + ":" + port;
-
-    socket = new WebSocket(host);
-
-    socket.golem_type = type;
-
-    if (type == 'target')
-        socket.onerror = function(evt) {
-            $.rustaMsgBox({
-                fadeOut: false,
-                closeButton: true,
-                content: "Impossible de se connecter à " + host,
-                mode: 'error',
-                bottom: '150px',
-                fadeTimer: 4000
-            });
-        };
-
-    socket.onmessage = function(evt) {
-        log(type + " : Received Message: " + evt.data);
-
-        var data = evt.data.substring(8);
-        data = JSON.parse(data);
-
-        if (data.type == "call") {
-            last_call_received = evt.data;
-            golem_data_response(data);
-            log("Calling : " + calls[data.id].name + " (id:" + data.id + ", args:" + JSON.stringify(data.params) + ")");
-            calls[data.id].call(data.params);
-        }
-        else if (data.type == "answer") {
-            last_answer_received = evt.data;
-            golem_data_response(data);
-        }
-    };
-    socket.onclose = function(evt) {
-        log(type + " : Connection closed.");
-    };
-    socket.onopen = function(evt) {
-        log(type + " : Connection opened.");
-
-        golem_send(this, {
-            type: "identity",
-            category: type,
-            idsession: context,
-            version: golem_project_version,
-            revision: golem_project_revision,
-            name: golem_project_name + "_" + type
-        });
-
-        if (this.golem_type == "target") {
-            calls.forEach(function(element, index, array) {
-                golem_send(this, {
-                    type: "interaction",
-                    category: "action",
-                    id: index,
-                    name: element.golem_name,
-                    descriptor: element.golem_descriptor,
-                    args: element.golem_args,
-                });
-            }, this);
-        }
-        else if (this.golem_type == "front") {
-            // Used to run tests, function must be defined in projet file
-            golem_tests(this);
-        }
-    };
-    return socket;
-}
-
-function golem_init(host, port, context) {
-    var socket_target = golem_connect(host, port, "target", context);
-    var socket_front = golem_connect(host, port, "front", context);
-
-    return socket_front;
+class GolemTarget extends GolemCore {
+    
+    setParsingFct(call, confirm_interaction, confirm_interaction_array) {
+        this.add_parsing_function("call", call)
+        this.add_parsing_function("confirm_interaction", confirm_interaction)
+        this.add_parsing_function("confirm_interaction_array", confirm_interaction_array)
+    }
+    
+    identify(name) {
+        super.identify("front", name)
+    }
+    
+    interactionArray(array) {
+        this.send({
+    	    type:"interaction_array",
+    	    interactions:array
+    	});
+    }
+    
+    interaction(interaction) {
+        interaction.type = "interaction"
+        this.send(interaction);
+    }
+    
+    delInteraction(idInt, idStr) {
+        this.send({
+    	    type:"interaction_array",
+    	    id_interaction: idInt,
+    	    id_str_interaction: idStr
+    	});
+    }
 }

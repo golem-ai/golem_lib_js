@@ -5,6 +5,9 @@
     var tmp1 = new GolemFront("golem.ai", 4009, start, def, def, def)
     tmp1.setParsingFct(def, def, def)
 
+    var tmp2 = new GolemTarget("golem.ai", 4009, start2, def, def, def)
+    tmp2.setParsingFct(def, def, def)
+
     function def(evt, client) {
         console.log(client, "---", evt)   
     }
@@ -13,5 +16,11 @@
         console.log(client)
         client.identify("TestingFront")
         client.sendRequest(lang_fr, "Un coeur rose")
+    }
+    
+    function start2(evt, client) {
+        console.log(client)
+        client.identify("TestingTarget")
+        client.delInteraction(4, "test_id")
     }
 </script>
