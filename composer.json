@@ -1,0 +1,17 @@
+{
+    "name": "golemjs",
+    "type": "library",
+    "description": "Golem.ai Javascript Framework",
+    "keywords": ["framework"],
+    "homepage": "http://golem.ai",
+    "authors": [
+        {
+            "name": "Killian Vermersch",
+            "email": "killian@golem.ai"
+        },
+        {
+            "name": "Thomas Solignac",
+            "homepage": "thomas@golem.ai"
+        }
+    ]
+}
