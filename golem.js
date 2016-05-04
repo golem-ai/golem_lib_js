@@ -39,10 +39,11 @@ class GolemCore {
     /*
     ** Public
     */
-    constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
+    constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct, onSendFct) {
 	this.identity = 'unidentified';
 	this.name = '';
         this.call_map = {};
+	this.add_parsing_function('send', onSendFct);
         
         this.connected = false;
         var host = "ws://" + host + ":" + port;
@@ -76,6 +77,9 @@ class GolemCore {
         var len = pad8(byteLength(message)); // Header see protocol
         this.socket.send(len + message);
         this.last_packet_sent = message;
+        var call = this.call_map['send'];
+        if (typeof call == 'function')
+	    call(this, message);
     }
     
     /*
