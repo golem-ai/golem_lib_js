@@ -41,7 +41,6 @@ class GolemCore {
     */
     constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
         this.call_map = {};
-        this.call_map["identity_confirm"] = this.identityConfirm;
         
         this.connected = false;
         var host = "ws://" + host + ":" + port;
@@ -93,10 +92,6 @@ class GolemCore {
     	this.identity = identity + "_not_confirmed";
     }
     
-    identityConfirm(client, obj) {
-        client.identity = obj.category;
-    }
-    
     add_parsing_function(key, call) {
         if (typeof call != 'function' && call != null) {
             console.log("warning ! Paramer function call -", key, " is unset");
@@ -109,6 +104,8 @@ class GolemCore {
         msg = msg.substring(8);
         var obj = JSON.parse(msg);
         var key = obj.type;
+	if (key == "identity_confirm")
+            this.identity = obj.category;
         var call = this.call_map[key];
         if (typeof call != 'function' && call != null) {
             console.log("Received unknown action ", key, " in ", this.identity);
@@ -122,8 +119,8 @@ class GolemCore {
 
 
 class GolemFront extends GolemCore {
-    
-    setParsingFct(requestConfirm, answer, setFixedTimeOk) {
+    setParsingFct(identityConfirm, requestConfirm, answer, setFixedTimeOk) {
+        this.add_parsing_function("identity_confirm", identityConfirm);
         this.add_parsing_function("request_confirm", requestConfirm);
         this.add_parsing_function("answer", answer);
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
@@ -155,8 +152,8 @@ class GolemFront extends GolemCore {
 }
 
 class GolemTarget extends GolemCore {
-    
-    setParsingFct(call, confirm_interaction, confirm_interaction_array) {
+    setParsingFct(identityConfirm, call, confirm_interaction, confirm_interaction_array) {
+        this.add_parsing_function("identity_confirm", identityConfirm);
         this.add_parsing_function("call", call);
         this.add_parsing_function("confirm_interaction", confirm_interaction);
         this.add_parsing_function("confirm_interaction_array", confirm_interaction_array);
