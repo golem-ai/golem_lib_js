@@ -40,6 +40,8 @@ class GolemCore {
     ** Public
     */
     constructor(host, port, onOpenFct, onErrorFct, onMsgFct, onCloseFct) {
+	this.identity = 'unidentified';
+	this.name = '';
         this.call_map = {};
         
         this.connected = false;
@@ -90,6 +92,7 @@ class GolemCore {
     	    name: name
     	});
     	this.identity = identity + "_not_confirmed";
+    	this.name = name;
     }
     
     add_parsing_function(key, call) {
