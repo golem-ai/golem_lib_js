@@ -160,7 +160,7 @@ class GolemTarget extends GolemCore {
     }
     
     identify(name, id_session) {
-        super.identify("front", name, id_session);
+        super.identify("target", name, id_session);
     }
     
     interactionArray(array) {
