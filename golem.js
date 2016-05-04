@@ -126,11 +126,12 @@ class GolemCore {
 
 
 class GolemFront extends GolemCore {
-    setParsingFct(identityConfirm, requestConfirm, answer, setFixedTimeOk) {
+    setParsingFct(identityConfirm, requestConfirm, answer, setFixedTimeOk, onRequest) {
         this.add_parsing_function("identity_confirm", identityConfirm);
         this.add_parsing_function("request_confirm", requestConfirm);
         this.add_parsing_function("answer", answer);
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
+        this.add_parsing_function("request", onRequest);
     }
     
     identify(name, id_session) {
@@ -138,11 +139,15 @@ class GolemFront extends GolemCore {
     }
     
     sendRequest(lang, text) {
-        this.send({
+	var request = {
     	    type:"request",
     	    language:lang,
     	    text:text
-    	});
+    	};
+        this.send(request);
+        var call = this.call_map['request'];
+        if (typeof call == 'function')
+	    call(this, request);
     }
     
     setFixedTime(year, month, day, h, m, s) {
