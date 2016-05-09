@@ -56,6 +56,7 @@ class GolemCore {
 		onOpenFct(client, evt);
         };
         this.socket.onerror = function(evt) {
+            client.connected = false;
 	    if (typeof onErrorFct == 'function')
 		onErrorFct(client, evt);
         };
@@ -70,7 +71,7 @@ class GolemCore {
 	    if (typeof onCloseFct == 'function')
 		onCloseFct(client, evt);
         };
-    };
+    }
     
     send(message) {
         message = JSON.stringify(message);
@@ -80,6 +81,10 @@ class GolemCore {
         var call = this.call_map['send'];
         if (typeof call == 'function')
 	    call(this, message);
+    }
+
+    close() {
+	return this.socket.close();
     }
     
     /*
