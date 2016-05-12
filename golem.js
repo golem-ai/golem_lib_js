@@ -32,8 +32,8 @@ function log(message) {
 /*
 ** Framework
 */
-const lang_fr = "french";
-const lang_en = "english";
+const lang_fr = "fr-fr";
+const lang_en = "en-us";
 
 class GolemCore {
     /*
@@ -96,8 +96,6 @@ class GolemCore {
     	    type:"identity",
     	    category:identity,
     	    id_session:id_session,
-    	    version:1,
-    	    revision:0,
     	    name: name
     	});
     	this.identity = identity + "_not_confirmed";
@@ -192,11 +190,10 @@ class GolemTarget extends GolemCore {
         this.send(interaction);
     }
     
-    delInteraction(idInt, idStr) {
+    delInteraction(id) {
         this.send({
-    	    type:"interaction_array",
-    	    id_interaction: idInt,
-    	    id_str_interaction: idStr
+    	    type:"del_interaction",
+    	    id_interaction: id,
     	});
     }
 }
