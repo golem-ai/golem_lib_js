@@ -129,12 +129,13 @@ class GolemCore {
 
 
 class GolemFront extends GolemCore {
-    setParsingFct(identityConfirm, requestConfirm, answer, setFixedTimeOk, onRequest) {
+    setParsingFct(identityConfirm, requestConfirm, answer, setFixedTimeOk, onRequest, onError) {
         this.add_parsing_function("identity_confirm", identityConfirm);
         this.add_parsing_function("request_confirm", requestConfirm);
         this.add_parsing_function("answer", answer);
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
         this.add_parsing_function("request", onRequest);
+        this.add_parsing_function("error", onError);
     }
     
     identify(name, id_session) {
@@ -167,11 +168,12 @@ class GolemFront extends GolemCore {
 }
 
 class GolemTarget extends GolemCore {
-    setParsingFct(identityConfirm, call, confirm_interaction, confirm_interaction_array) {
+    setParsingFct(identityConfirm, call, confirm_interaction, confirm_interaction_array, onError) {
         this.add_parsing_function("identity_confirm", identityConfirm);
         this.add_parsing_function("call", call);
         this.add_parsing_function("confirm_interaction", confirm_interaction);
         this.add_parsing_function("confirm_interaction_array", confirm_interaction_array);
+        this.add_parsing_function("error", onError);
     }
     
     identify(name, id_session) {
