@@ -194,7 +194,21 @@ class GolemTarget extends GolemCore {
     
     delInteraction(id) {
         this.send({
-    	    type:"del_interaction",
+    	    type:"delete_interaction",
+    	    id_interaction: id,
+    	});
+    }
+    
+    enableInteraction(id) {
+        this.send({
+    	    type:"enable_interaction",
+    	    id_interaction: id,
+    	});
+    }
+    
+    disableInteraction(id) {
+        this.send({
+    	    type:"disable_interaction",
     	    id_interaction: id,
     	});
     }
