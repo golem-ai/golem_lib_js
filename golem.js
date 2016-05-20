@@ -194,3 +194,87 @@ class GolemTarget extends GolemCore {
     	});
     }
 }
+
+class GolemFrontAndTarget extends GolemCore {
+    
+    //Specific
+    identify(name, id_session) {
+        super.identify("front_and_target", name, id_session);
+    }
+    
+    //Front c/c
+    setParsingFctFront(identityConfirm, requestConfirm, answer, setFixedTimeOk, onRequest, onError) {
+        this.add_parsing_function("confirm_identity", identityConfirm);
+        this.add_parsing_function("confirm_request", requestConfirm);
+        this.add_parsing_function("answer", answer);
+        this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
+        this.add_parsing_function("request", onRequest);
+        this.add_parsing_function("error", onError);
+    }
+    
+    sendRequest(lang, text) {
+	    var request = {
+    	    type:"request",
+    	    language:lang,
+    	    text:text
+    	};
+        this.send(request);
+        var call = this.call_map['request'];
+        if (typeof call == 'function')
+	    call(this, request);
+    }
+    
+    setFixedTime(year, month, day, h, m, s) {
+        this.send({
+    	    type:"set_fixed_time",
+    	    year:year,
+    	    month:month,
+    	    day:day,
+    	    hour:h,
+    	    minute:m,
+    	    seconde:s
+    	});
+    }
+    
+    // Target c/c
+    setParsingFctTarget(identityConfirm, call, confirm_interaction, confirm_interaction_array, onError) {
+        this.add_parsing_function("confirm_identity", identityConfirm);
+        this.add_parsing_function("call", call);
+        this.add_parsing_function("confirm_interaction", confirm_interaction);
+        this.add_parsing_function("confirm_interaction_array", confirm_interaction_array);
+        this.add_parsing_function("error", onError);
+    }
+    
+    interactionArray(array) {
+        this.send({
+    	    type:"interaction_array",
+    	    interactions:array
+    	});
+    }
+    
+    interaction(interaction) {
+        interaction.type = "interaction"
+        this.send(interaction);
+    }
+    
+    deleteInteraction(id) {
+        this.send({
+    	    type:"delete_interaction",
+    	    id_interaction: id,
+    	});
+    }
+    
+    enableInteraction(id) {
+        this.send({
+    	    type:"enable_interaction",
+    	    id_interaction: id,
+    	});
+    }
+    
+    disableInteraction(id) {
+        this.send({
+    	    type:"disable_interaction",
+    	    id_interaction: id,
+    	});
+    }
+}
