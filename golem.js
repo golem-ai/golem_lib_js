@@ -76,6 +76,7 @@ class GolemCore {
     send(message) {
         message = JSON.stringify(message);
         var len = pad8(byteLength(message)); // Header see protocol
+	len = ''; // Disable length header
         this.socket.send(len + message);
         this.last_packet_sent = message;
         var call = this.call_map['send'];
