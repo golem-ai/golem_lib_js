@@ -95,7 +95,7 @@ class GolemCore {
     parsing(msg) {
         var obj = JSON.parse(msg);
         var key = obj.type;
-	if (key == "identity_confirm")
+	if (key == "confirm_identity")
             this.identity = obj.category;
         var call = this.call_map[key];
         if (typeof call != 'function' && call != null) {
@@ -111,8 +111,8 @@ class GolemCore {
 
 class GolemFront extends GolemCore {
     setParsingFct(identityConfirm, requestConfirm, answer, setFixedTimeOk, onRequest, onError) {
-        this.add_parsing_function("identity_confirm", identityConfirm);
-        this.add_parsing_function("request_confirm", requestConfirm);
+        this.add_parsing_function("confirm_identity", identityConfirm);
+        this.add_parsing_function("confirm_request", requestConfirm);
         this.add_parsing_function("answer", answer);
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
         this.add_parsing_function("request", onRequest);
@@ -150,7 +150,7 @@ class GolemFront extends GolemCore {
 
 class GolemTarget extends GolemCore {
     setParsingFct(identityConfirm, call, confirm_interaction, confirm_interaction_array, onError) {
-        this.add_parsing_function("identity_confirm", identityConfirm);
+        this.add_parsing_function("confirm_identity", identityConfirm);
         this.add_parsing_function("call", call);
         this.add_parsing_function("confirm_interaction", confirm_interaction);
         this.add_parsing_function("confirm_interaction_array", confirm_interaction_array);
