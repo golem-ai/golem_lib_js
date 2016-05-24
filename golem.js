@@ -202,14 +202,17 @@ class GolemFrontAndTarget extends GolemCore {
         super.identify("front_and_target", name, id_session);
     }
     
-    //Front c/c
-    setParsingFctFront(identityConfirm, requestConfirm, answer, setFixedTimeOk, onRequest, onError) {
+    setParsingFct(identityConfirm, onError) {
         this.add_parsing_function("confirm_identity", identityConfirm);
+        this.add_parsing_function("error", onError);
+    }
+    
+    //Front c/c
+    setParsingFctFront(requestConfirm, answer, setFixedTimeOk, onRequest) {
         this.add_parsing_function("confirm_request", requestConfirm);
         this.add_parsing_function("answer", answer);
         this.add_parsing_function("set_fixed_time_ok", setFixedTimeOk);
         this.add_parsing_function("request", onRequest);
-        this.add_parsing_function("error", onError);
     }
     
     sendRequest(lang, text) {
@@ -237,12 +240,10 @@ class GolemFrontAndTarget extends GolemCore {
     }
     
     // Target c/c
-    setParsingFctTarget(identityConfirm, call, confirm_interaction, confirm_interaction_array, onError) {
-        this.add_parsing_function("confirm_identity", identityConfirm);
+    setParsingFctTarget(call, confirm_interaction, confirm_interaction_array) {
         this.add_parsing_function("call", call);
         this.add_parsing_function("confirm_interaction", confirm_interaction);
         this.add_parsing_function("confirm_interaction_array", confirm_interaction_array);
-        this.add_parsing_function("error", onError);
     }
     
     interactionArray(array) {
