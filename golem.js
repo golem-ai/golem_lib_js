@@ -1,11 +1,13 @@
+'use strict';
+
 /*
 ** Tools
 */
 
 function log(message) {
     // create a html container with golem_logs as an ID to have logs printed
-    x = new Date();
-    t = x.getHours() + ":" + x.getMinutes() + ":" + (x.getSeconds() < 10 ? "0" + x.getSeconds() : x.getSeconds());
+    var x = new Date();
+    var t = x.getHours() + ":" + x.getMinutes() + ":" + (x.getSeconds() < 10 ? "0" + x.getSeconds() : x.getSeconds());
     message = t + " " + message;
     // $("#golem_logs").prepend(message+"<br>");
     console.log(message);
@@ -15,8 +17,8 @@ function log(message) {
 /*
 ** Framework
 */
-const lang_fr = "fr-fr";
-const lang_en = "en-us";
+var lang_fr = "fr-fr";
+var lang_en = "en-us";
 
 class GolemCore {
     /*
@@ -168,9 +170,9 @@ class GolemTarget extends GolemCore {
     	});
     }
     
-    interaction(interaction) {
-        interaction.type = "interaction"
-        this.send(interaction);
+    interaction(inter) {
+        inter.type = "interaction"
+        this.send(inter);
     }
     
     deleteInteraction(id) {
@@ -253,9 +255,9 @@ class GolemFrontAndTarget extends GolemCore {
     	});
     }
     
-    interaction(interaction) {
-        interaction.type = "interaction"
-        this.send(interaction);
+    interaction(inter) {
+        inter.type = "interaction"
+        this.send(inter);
     }
     
     deleteInteraction(id) {
