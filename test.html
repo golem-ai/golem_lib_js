@@ -1,24 +1,25 @@
 <script src="golem.js"></script>
 <script>
-    var tmp1 = new GolemFront("golem.ai", 4009, start, def, def, def, def)
-    tmp1.setParsingFct(def, def, def, def, def)
-
-    var tmp2 = new GolemTarget("golem.ai", 4009, start2, def, def, def, def)
-    tmp2.setParsingFct(def, def, def, def)
-
-    function def(evt, client) {
+  golem_log_no_config = true;
+  golem_log_no_config_core = true;
+  
+    function def(client, evt) {
         console.log(client, "---", evt)   
     }
     
-    function start(evt, client) {
+    function start_front(client, evt) {
         console.log(client)
         client.identify("TestingFront", "session_name")
         client.sendRequest(lang_fr, "Un coeur rose")
     }
     
-    function start2(evt, client) {
+    function start_target(client, evt) {
         console.log(client)
         client.identify("TestingTarget", "session_name")
-        client.delInteraction(4, "test_id")
+        client.deleteInteraction(4, "test_id")
     }
+
+    var tmp1 = new GolemFront("golem.ai", 4009, {on_open:start_front}, {})
+
+    var tmp2 = new GolemTarget("golem.ai", 4009, {on_open:start_target}, {})
 </script>
