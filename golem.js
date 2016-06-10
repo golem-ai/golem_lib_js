@@ -185,8 +185,10 @@ class GolemCore {
             console.log("Msg->", msg);
             return ;
         }
-	else if (call != null)
+	else if (typeof call == 'function' && call != null)
             call(this, obj);
+	else
+	    log("Cannot manage message of type : "+key);
     }
 }
 
@@ -304,7 +306,7 @@ class GolemFrontAndTarget extends GolemCore {
     	    text:text
     	};
         this.send(request);
-        var call = this.call_map['request'];
+        var call = this.config_core['on_request'];
         if (typeof call == 'function')
 	    call(this, request);
     }
