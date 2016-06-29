@@ -35,10 +35,10 @@ var config = {
     "handshake": golem_no_config, 
     "confirm_identity": golem_no_config,
     "error": golem_no_config,
-    "confirm_request": golem_no_config,
     // Front
     "answer": golem_no_config,
-    "set_fixed_time_ok": golem_no_config,
+    "confirm_request": golem_no_config,
+    "confirm_set_fixed_time": golem_no_config,
     "request": golem_no_config,
     "say": golem_no_config,
     "call": golem_no_config,
