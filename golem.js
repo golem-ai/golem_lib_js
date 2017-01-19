@@ -140,13 +140,17 @@ class GolemCore {
     
     send(message) {
         message = JSON.stringify(message);
+        this.send_txt(message);
+    }
+    
+    send_txt(message) {
         this.socket.send(message);
         this.last_packet_sent = message;
         var call = this.config_core["on_send"];
         if (typeof call == 'function')
 	    call(this, message);
     }
-
+    
     close() {
 	return this.socket.close();
     }
