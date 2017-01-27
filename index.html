@@ -8,12 +8,14 @@
     }
     
     function start_front(client, evt) {
+        client.authentication('b4682470605fdab786d9b0c548f405fc');
         client.identify("TestingFront", "session_name");
         client.sendRequest(lang_fr, "Un coeur rose");
         //console.log(client);
     }
     
     function start_target(client, evt) {
+        client.authentication('b4682470605fdab786d9b0c548f405fc');
         client.identify("TestingTarget", "session_name");
         client.deleteInteraction("test_id");
         //console.log(client); 
@@ -31,6 +33,6 @@
         console.log("(closed) " + client.name);
     }
 
-    //var tmp1 = new GolemFront("b4682470605fdab786d9b0c548f405fc", {on_open:start_front, on_message:on_message, on_send:on_send}, {});
-    var tmp2 = new GolemTarget("b4682470605fdab786d9b0c548f405fc", {on_open:start_target, on_message:on_message, on_send:on_send}, {});
+    var tmp1 = new GolemFront(proxy_url, proxy_ws_port, {on_open:start_front, on_message:on_message, on_send:on_send}, {});
+    var tmp2 = new GolemTarget(proxy_url, proxy_ws_port, {on_open:start_target, on_message:on_message, on_send:on_send}, {});
 </script>

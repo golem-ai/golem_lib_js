@@ -100,21 +100,19 @@ class GolemCore {
     /*
     ** Public
     */
-    constructor(token, config_core_user, config_user) {
+    constructor(url, port, config_core_user, config_user) {
     	this.config_core = merge_config(config_core, config_core_user);
     	this.config = merge_config(config, config_user);
     	this.identity = 'unidentified';
     	this.name = '*newborn*';
-    	this.token = token;
         
         this.connected = false;
-        var host = "ws://" + proxy_url + ":" + proxy_ws_port;
+        var host = "ws://" + url + ":" + port;
         this.socket = new WebSocket(host);
         var client = this;
         
         this.socket.onopen = function(evt) {
             client.connected = true;
-            client.authentication();
     	    var onOpenFct = client.config_core["on_open"];
     	    if (typeof onOpenFct == 'function')
     		    onOpenFct(client, evt);
@@ -160,10 +158,10 @@ class GolemCore {
     /*
     ** Private
     */
-    authentication() {
+    authentication(token) {
         this.send({
     	    type:"authentication",
-    	    token: this.token
+    	    token: token
     	});
     }
     
