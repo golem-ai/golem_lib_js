@@ -1,0 +1,36 @@
+<script src="golem.js"></script>
+<script>
+  //golem_log_no_config = true;
+  //golem_log_no_config_core = true;
+  
+    function def(client, evt) {
+        console.log(client, "---", evt);
+    }
+    
+    function start_front(client, evt) {
+        client.identify("TestingFront", "session_name");
+        client.sendRequest(lang_fr, "Un coeur rose");
+        //console.log(client);
+    }
+    
+    function start_target(client, evt) {
+        client.identify("TestingTarget", "session_name");
+        client.deleteInteraction("test_id");
+        //console.log(client); 
+    }
+    
+    function on_message(client, evt) {
+        console.log("(recieved) " + client.name + " : " + evt.data);
+    }
+
+    function on_send(client, msg) {
+        console.log("(sent) " + client.name + " : " + msg);
+    }
+
+    function on_close(client, msg) {
+        console.log("(closed) " + client.name);
+    }
+
+    //var tmp1 = new GolemFront("b4682470605fdab786d9b0c548f405fc", {on_open:start_front, on_message:on_message, on_send:on_send}, {});
+    var tmp2 = new GolemTarget("b4682470605fdab786d9b0c548f405fc", {on_open:start_target, on_message:on_message, on_send:on_send}, {});
+</script>

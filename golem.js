@@ -20,8 +20,8 @@ var lang_fr = "fr-fr";
 var lang_en = "en-us";
 
 var proxy_url      = "api.golem.ai";
-var proxy_tcp_port = 8003;
-var proxy_tcp_ws   = 8004;
+var proxy_tcp_port = 3003;
+var proxy_ws_port  = 3004;
 
 var golem_log_no_config = false;
 
@@ -35,6 +35,8 @@ function golem_no_config(client, data)
 }
 
 var config = {
+    // authentication
+    "authentication_status": golem_no_config,
     //common
     "handshake": golem_no_config, 
     "confirm_identity": golem_no_config,
@@ -85,17 +87,11 @@ function merge_config(base_config, user_config)
     var config_final = {};
 
     for (var attr in base_config)
-    {
     	config_final[attr] = base_config[attr];
-    }
 
     if (typeof user_config == 'object' && user_config != null)
-    {
     	for (var attr in user_config)
-    	{
     	    config_final[attr] = user_config[attr];
-    	}
-    }
 
     return config_final;
 }
@@ -104,41 +100,43 @@ class GolemCore {
     /*
     ** Public
     */
-    constructor(host, port, config_core_user, config_user) { //onOpenFct, onErrorFct, onMsgFct, onCloseFct, onSendFct) {
+    constructor(token, config_core_user, config_user) {
     	this.config_core = merge_config(config_core, config_core_user);
     	this.config = merge_config(config, config_user);
     	this.identity = 'unidentified';
     	this.name = '*newborn*';
+    	this.token = token;
         
         this.connected = false;
-        var host = "ws://" + host + ":" + port;
+        var host = "ws://" + proxy_url + ":" + proxy_ws_port;
         this.socket = new WebSocket(host);
         var client = this;
         
         this.socket.onopen = function(evt) {
             client.connected = true;
+            client.authentication();
     	    var onOpenFct = client.config_core["on_open"];
     	    if (typeof onOpenFct == 'function')
-    		onOpenFct(client, evt);
+    		    onOpenFct(client, evt);
         };
         this.socket.onerror = function(evt) {
             client.connected = false;
     	    var onErrorFct = client.config_core["on_error"];
     	    if (typeof onErrorFct == 'function')
-    		onErrorFct(client, evt);
+    		    onErrorFct(client, evt);
         };
         this.socket.onmessage = function(evt) {
             client.last_packet_received = evt;
     	    var onMsgFct = client.config_core["on_message"];
     	    if (typeof onMsgFct == 'function')
-    		onMsgFct(client, evt);
+    		    onMsgFct(client, evt);
             client.parsing(evt.data);
         };
         this.socket.onclose = function(evt) {
             client.connected = false;
     	    var onCloseFct = client.config_core["on_close"];
     	    if (typeof onCloseFct == 'function')
-    		onCloseFct(client, evt);
+    		    onCloseFct(client, evt);
         };
     }
     
@@ -152,7 +150,7 @@ class GolemCore {
         this.last_packet_sent = message;
         var call = this.config_core["on_send"];
         if (typeof call == 'function')
-	    call(this, message);
+	        call(this, message);
     }
     
     close() {
@@ -162,6 +160,12 @@ class GolemCore {
     /*
     ** Private
     */
+    authentication() {
+        this.send({
+    	    type:"authentication",
+    	    token: this.token
+    	});
+    }
     
     identify(identity, name, id_session) {
     	this.name = name;
