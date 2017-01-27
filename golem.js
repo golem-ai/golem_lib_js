@@ -19,6 +19,10 @@ function log(message) {
 var lang_fr = "fr-fr";
 var lang_en = "en-us";
 
+var proxy_url      = "api.golem.ai";
+var proxy_tcp_port = 8003;
+var proxy_tcp_ws   = 8004;
+
 var golem_log_no_config = false;
 
 function golem_no_config(client, data)
