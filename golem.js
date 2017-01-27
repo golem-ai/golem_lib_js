@@ -25,8 +25,8 @@ function golem_no_config(client, data)
 {
     if (golem_log_no_config)
     {
-	log(client.name + " no config for " + data.type + ":");
-	console.log(data);
+    	log(client.name + " no config for " + data.type + ":");
+    	console.log(data);
     }
 }
 
@@ -62,8 +62,8 @@ function golem_no_config_core(client, evt)
 {
     if (golem_log_no_config_core)
     {
-	log(client.name + " : no config_core for :");
-	console.log(evt);
+    	log(client.name + " : no config_core for :");
+    	console.log(evt);
     }
 }
 
@@ -182,7 +182,7 @@ class GolemCore {
             return ;
         }
     	else if (typeof call == 'function' && call != null)
-                call(this, obj);
+            call(this, obj);
     	else
     	    log("Cannot manage message of type : "+key);
     }
@@ -202,7 +202,7 @@ class GolemFront extends GolemCore {
     	this.send(request);
         var call = this.config_core['on_request'];
         if (typeof call == 'function')
-	    call(this, request);
+	        call(this, request);
     }
     
     setFixedTime(year, month, day, h, m, s) {
@@ -272,7 +272,7 @@ class GolemFrontAndTarget extends GolemCore {
         this.send(request);
         var call = this.config_core['on_request'];
         if (typeof call == 'function')
-	    call(this, request);
+	        call(this, request);
     }
     
     setFixedTime(year, month, day, h, m, s) {
