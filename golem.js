@@ -100,14 +100,18 @@ class GolemCore {
     /*
     ** Public
     */
-    constructor(url, port, config_core_user, config_user) {
+    constructor(url, port, config_core_user, config_user, secured) {
     	this.config_core = merge_config(config_core, config_core_user);
     	this.config = merge_config(config, config_user);
     	this.identity = 'unidentified';
     	this.name = '*newborn*';
-        
+    	
+        var protocol = 'ws';
+        if (typeof secured != 'undefined' && secured == true)
+            var protocol = 'wss';
+            
         this.connected = false;
-        var host = "ws://" + url + ":" + port;
+        var host = protocol + "://" + url + ":" + port;
         this.socket = new WebSocket(host);
         var client = this;
         
